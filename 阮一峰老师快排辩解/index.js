@@ -75,3 +75,115 @@ function bubbleSort(arr) {
     }
     return arr;
 }
+
+// 分析阮一峰版每次递归都需要开个2个临时数组, 这就导致了空间复杂度暴涨,这是个什么概念? 下面是测试结果
+
+const arr = [];
+
+// 生成随机整数
+function random(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+} 
+
+// 生成length长度的随机数组
+
+function generateArr(len) {
+    for(var i = 0; i < len; i++) {
+        arr.push(random(1, len));
+    }
+}
+
+// 统计占用了多少空间
+
+let sum = 0;
+var quickSort = function(arr) {
+    if(arr.length <= 1) {
+        return arr;
+    }
+    var pivotIndex = Math.floor(arr.length / 2);
+    var pivot = arr.splice(pivotIndex, 1)[0];
+    var left = [];
+    var right = [];
+    for(var i = 0; i < arr.length; i++) {
+        if(arr[i] < pivot) {
+            left.push(arr[i]);
+        } else {
+            right.push(arr[i]);
+        }
+    }
+    sum = right.length + left.length + sum;
+    return quickSort(left).concat([pivot], quickSort(right))
+}
+// 生成十万个成员的数组
+generateArr(100000);
+
+// 将数组反向排序, 目的是使得接下来的快排达到最差情况
+arr.sort((a, b) => b - a); //b - a 是倒序 a - b 是正序
+quickSort(arr);
+
+console.log(sum) // 1481308 
+
+// --------------------------------------------------------------------------------------------------------
+
+// 快速排序是分治策略的经典实现,  分治策略如下:
+
+// 分解步骤: 将问题划分为一些子问题, 子问题的形式与原问题一样, 只是规模更小
+// 解决步骤: 递归的求解子问题, 如果子问题的规模足够小, 那就停止递归, 直接求解
+// 合并步骤: 将子问题的解组合成原问题的解
+
+// 快速排序函数
+function swap(array, a, b) {
+    // es6版
+      [array[a], array[b]] = [array[b], array[a]];
+    // es5版
+    /* const temp = array[a];
+      array[a] = array[b];
+      array[b] = temp; */
+}
+// 划分操作函数
+function partition(array, left, right) {
+    // 用索引去取中间值而非splice
+    const pivot = array[Math.floor((right + left) / 2)];
+    let i = left;
+    let j = right;
+
+    while(i <= j) {
+        while(compare(array[i], pivot) === -1) {
+            i++;
+        }
+        while(compare(array[i], pivot) === 1) {
+            j--;
+        }
+        if(i <= j) {
+            swap(array, i, j);
+            i++;
+            j--;
+        }
+    }
+    return i;
+}
+// 比较函数
+function compare(a, b) {
+    if(a === b) {
+        return 0;
+    }
+    return a < b ? -1 : 1; 
+}
+// 执行主导函数
+function quick(array, left, right) {
+    let index;
+    if (array.length > 1){
+        index = partition(array, left, right);
+        if(left < index - 1) {
+            quick(array, left, index - 1);
+        }
+        if(index < right) {
+            quick(array, index, right);
+        }
+    }
+    return array;
+}
+
+function quickSort(array) {
+    return quick(array, 0, array.length - 1);
+} 
