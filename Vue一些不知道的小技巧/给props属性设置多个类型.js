@@ -1,7 +1,7 @@
- 官方文档有提出props可以传入一个对象或者数组 我们通常会传数组
-<template>
+//  官方文档有提出props可以传入一个对象或者数组 我们通常会传数组
+{/* <template>
   <button :style="computedWidth">{{ computedWidth }}</button>
-</template>
+</template> */}
 
  
   export default {
@@ -19,9 +19,9 @@
   }
  
 
-  使用
-<template>
+  // 使用
+{/* <template>
   <my-button :width="100px"></my-button>
   <!-- or -->
   <my-button :width="100"></my-button>
-</template>
+</template> */}
