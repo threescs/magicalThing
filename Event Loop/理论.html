@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Event Loop</title>
+</head>
+<body>
+    <p>
+        谈: 为什么Javascript是单线程?
+        Javascript语言的一大特点就是单线程, 也就是说, 同一个时间只能做一件事, 那么, 为什么Javascript不能有多个线程呢?
+        说白了就是浏览器脚本语言 Javascript的主要用途是与用户互动, 以及操作DOM, 这决定了它只能是单线程, 否则会带来很复杂的同步问题.
+        比如, 假定Javascript同时有两个线程, 一个线程在某个DOM节点上添加内容, 另一个线程删除了这个节点, 这时浏览器应该以哪个线程为准?
+    </p>
+    <p>
+        <h1>任务队列</h1>
+        <span>
+            单线程就意味着, 所有任务需要排队, 前一个任务结束, 才会执行后一个任务, 如果前一个任务耗时很长, 后一个任务就不得不一直等着. 
+            如果排队是因为计算量大, CPU忙不过来, 倒也算了, 但是很多时候CPU是闲着的, 因为IO设备(输入输出设备) 很慢..
+            (1) 所有同步任务都在主线程上执行,形成一个执行栈
+            (2) 主线程之外, 还存在一个"任务队列", 只要异步任务有了运行结果, 就在"任务队列"之中放置一个事件.
+            (3) 一旦"执行栈"中的所有同步任务执行完毕, 系统就会读取"任务队列", 看看里面有哪些事件, 那些对应的异步任务, 于是结束等待状态, 进入执行栈,开始执行.
+            (4) 主线程不断重复上面的第三步
+        </span>
+    </p>
+    <p>
+        <h1>事件和回调函数</h1>
+        <span>
+            所谓"回调函数", 就是那些被主线程挂起来的代码, 异步任务必须指定回调函数, 当主线程开始执行异步任务, 就是执行对应的回调函数.
+            "任务队列"是一个先进先出的数据结构, 排在前面的事件, 优先被主线程读取, 主线程的读取过程基本上是自动的, 只要执行栈一清空,"任务队列"上第一位的事件就自动进入主线程..
+        </span>
+    </p>
+    <p>
+        <h1>Event Loop</h1>
+        <span>
+            主线程从"任务队列"中读取事件, 这个过程是循环不断的, 所有这种运行机制就称为Event Loop(事件循环)
+            <!-- 参考Event Loop.png -->
+            有一个堆和栈的概念, 栈中的代码调用各种外部API, 它们在"任务队列"中加入各种事件(click, load. done), 只要栈中的代码执行完毕, 主线程就会去读取"任务队列", 依次执行那些事件所对应的回调函数
+            <!-- 请看下面的例子 -->
+        </span>
+    </p>
+</body>
+<script>
+    // 例子
+    var req =new XMLHttpRequest();
+    req.open("GET", url);
+    req.onload = function() {};
+    req.onerror = function() {};
+    req.send();
+    // send是ajax操作向服务器发送数据, 它是一个异步任务, 意味着只有当前版本的所有代码执行完, 系统才会去读取"任务队列", 所以它等下于
+
+    var req = new XMLHttpRequest();
+    req.open("GET", url);
+    req.send();
+    req.onload =  function() {};
+    req.onerror = function() {};
+    // 也就是说, 指定回调函数的部分, 在send()方法的前面和后面无关紧要, 因为它们属于执行栈的一部分, 系统总是执行完它们, 才会读取"任务队列"
+</script>
+</html>
