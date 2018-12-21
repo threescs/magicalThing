@@ -1,10 +1,10 @@
-#记一次在vue项目中动态控制admin路由权限
+# 记一次在vue项目中动态控制admin路由权限
 
-##需求背景: 不同角色进入管理后台后, 生成角色所拥有权限的菜单
+## 需求背景: 不同角色进入管理后台后, 生成角色所拥有权限的菜单
 
-###思路分析: 根据后台返回角色权限列表, 对页面所有菜单进行匹配, 动态生成路由
+### 思路分析: 根据后台返回角色权限列表, 对页面所有菜单进行匹配, 动态生成路由
 
-##技术栈 vue-router + vuex + vue-router-control(这里我已经将匹配逻辑封装成一个插件, 欢迎大家测试) 
+## 技术栈 vue-router + vuex + vue-router-control(这里我已经将匹配逻辑封装成一个插件, 欢迎大家测试) 
 
 
 ```javascript
@@ -29,7 +29,7 @@ main.js
       next({ path: '/401', replace: true, query: { noGoBack: true } });
     }
 ```
-###接下来我们在store定义两个modules分别是user和permission user代码如下
+### 接下来我们在store定义两个modules分别是user和permission user代码如下
 
 ```javascript
 const user = {
@@ -72,7 +72,7 @@ const user = {
   },
   ```
 
-  ###接下来是permission 匹配权限逻辑
+  ### 接下来是permission 匹配权限逻辑
 
   ``` javascript
   //这边直接引入 vue-router-control
